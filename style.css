@@ -124,6 +124,52 @@ header p {
     color: #94a3b8;
 }
 
+.controls-section {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    background: var(--card-bg);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 15px;
+    border-radius: 20px;
+}
+
+.control-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.icon {
+    font-size: 1.2rem;
+    width: 24px;
+    text-align: center;
+}
+
+.progress-bar {
+    flex: 1;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress {
+    height: 100%;
+    background: linear-gradient(to right, var(--primary), var(--secondary));
+    transition: width 0.1s ease;
+}
+
+#volume-value,
+#brightness-value {
+    font-size: 0.8rem;
+    font-weight: 600;
+    min-width: 40px;
+    text-align: right;
+    color: #94a3b8;
+}
+
 @media (max-width: 480px) {
     .container {
         padding: 10px;

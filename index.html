@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,9 +8,11 @@
     <link rel="stylesheet" href="style.css">
     <!-- MediaPipe scripts -->
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"
+        crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
 </head>
+
 <body>
     <div class="container">
         <header>
@@ -20,10 +23,27 @@
         <div class="video-wrapper">
             <video class="input_video" playsinline></video>
             <canvas class="output_canvas"></canvas>
-            
+
             <div class="counter-card">
                 <span id="finger-count">0</span>
                 <label>Fingers</label>
+            </div>
+        </div>
+
+        <div class="controls-section">
+            <div class="control-item">
+                <i class="icon">🔊</i>
+                <div class="progress-bar">
+                    <div id="volume-bar" class="progress" style="width: 50%;"></div>
+                </div>
+                <span id="volume-value">50%</span>
+            </div>
+            <div class="control-item">
+                <i class="icon">☀️</i>
+                <div class="progress-bar">
+                    <div id="brightness-bar" class="progress" style="width: 50%;"></div>
+                </div>
+                <span id="brightness-value">50%</span>
             </div>
         </div>
 
@@ -34,4 +54,5 @@
     </div>
     <script src="script.js"></script>
 </body>
+
 </html>

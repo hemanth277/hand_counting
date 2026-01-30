@@ -4,6 +4,13 @@ const canvasCtx = canvasElement.getContext('2d');
 const fingerCountElement = document.getElementById('finger-count');
 const statusElement = document.getElementById('status');
 const fpsElement = document.getElementById('fps');
+const volumeBar = document.getElementById('volume-bar');
+const volumeValue = document.getElementById('volume-value');
+const brightnessBar = document.getElementById('brightness-bar');
+const brightnessValue = document.getElementById('brightness-value');
+
+let currentVolume = 50;
+let currentBrightness = 50;
 
 let lastTime = 0;
 
@@ -21,6 +28,7 @@ function onResults(results) {
     canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
 
     let totalFingers = 0;
+    const handGestures = [];
 
     if (results.multiHandLandmarks && results.multiHandedness) {
         for (let index = 0; index < results.multiHandLandmarks.length; index++) {
@@ -29,12 +37,12 @@ function onResults(results) {
             const isRightHand = classification.label === 'Right';
 
             // Draw Landmarks
-            drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {color: '#ffffff', lineWidth: 2});
-            drawLandmarks(canvasCtx, landmarks, {color: '#6366f1', lineWidth: 1, radius: 3});
+            drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, { color: '#ffffff', lineWidth: 2 });
+            drawLandmarks(canvasCtx, landmarks, { color: '#6366f1', lineWidth: 1, radius: 3 });
 
             // Finger counting logic
             const fingers = [];
-            
+
             // Thumb
             // Tip (4) vs IP (3) vs MCP (2)
             // Note: MediaPipe JS labels might be mirrored depending on camera
@@ -57,9 +65,36 @@ function onResults(results) {
             }
 
             totalFingers += fingers.filter(f => f === 1).length;
+
+            // Gesture Logic
+            const thumbUp = landmarks[4].y < landmarks[2].y - 0.05;
+            const thumbDown = landmarks[4].y > landmarks[2].y + 0.05;
+            const othersClosed = [8, 12, 16, 20].every(id => landmarks[id].y > landmarks[id - 2].y);
+
+            if (othersClosed) {
+                handGestures.push({ up: thumbUp, down: thumbDown });
+            }
         }
+
+        // Apply Gestures
+        if (handGestures.length === 1) {
+            const { up, down } = handGestures[0];
+            if (up) currentVolume = Math.min(100, currentVolume + 2);
+            else if (down) currentVolume = Math.max(0, currentVolume - 2);
+        } else if (handGestures.length === 2) {
+            const g1 = handGestures[0];
+            const g2 = handGestures[1];
+            if (g1.up && g2.up) currentBrightness = Math.min(100, currentBrightness + 2);
+            else if (g1.down && g2.down) currentBrightness = Math.max(0, currentBrightness - 2);
+        }
+
+        // Update UI
+        volumeBar.style.width = `${currentVolume}%`;
+        volumeValue.innerText = `${Math.round(currentVolume)}%`;
+        brightnessBar.style.width = `${currentBrightness}%`;
+        brightnessValue.innerText = `${Math.round(currentBrightness)}%`;
     }
-    
+
     fingerCountElement.innerText = totalFingers;
     canvasCtx.restore();
 }
@@ -81,7 +116,7 @@ hands.onResults(onResults);
 
 const camera = new Camera(videoElement, {
     onFrame: async () => {
-        await hands.send({image: videoElement});
+        await hands.send({ image: videoElement });
     },
     width: 640,
     height: 480
